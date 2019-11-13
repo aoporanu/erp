@@ -67,6 +67,7 @@ class ProductsController extends Controller
     public function update(Request $request, Product $product)
     {
         $product->update($request->all());
+        $product->save();
 
         return response()->json($product, 200);
     }
@@ -88,5 +89,14 @@ class ProductsController extends Controller
         }
 
         return response()->json([null]);
+    }
+
+    public function search(Request $request)
+    {
+        $whereData = [
+            (array)$request->all()
+        ];
+        $products = Product::where($whereData[0])->get();
+        return response()->json($products, 200);
     }
 }

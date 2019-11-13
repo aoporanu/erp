@@ -7,3 +7,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('/products', 'ProductsController');
+Route::post('/products/search', 'ProductsController@search');
