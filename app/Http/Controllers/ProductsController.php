@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Stock;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -98,5 +99,13 @@ class ProductsController extends Controller
         ];
         $products = Product::where($whereData[0])->get();
         return response()->json($products, 200);
+    }
+
+    public function addProductToStock(Request $request)
+    {
+        $product = Product::find($request->product_id);
+        $stock = Stock::firstOrNew(['id' => $request->stock_id]);
+
+        return response()->json($stock->addProduct($product), 200);
     }
 }
