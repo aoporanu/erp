@@ -30,7 +30,10 @@ class StocksController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'name' => 'required',
+            'qty' => 'required|min:1',
+            'product_id' => 'required|exists:products,id',
+            'lot' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -38,6 +41,8 @@ class StocksController extends Controller
         }
 
         $stock = Stock::create($request->all());
+        // create movement
+        // return movenment
         return response()->json($stock, 201);
     }
 

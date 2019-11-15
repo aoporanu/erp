@@ -16,6 +16,9 @@ class CreateStocksTable extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 70);
+            $table->integer('qty')->default(0);
+            $table->integer('product_id');
+            $table->string('lot');
             $table->timestamps();
         });
     }
