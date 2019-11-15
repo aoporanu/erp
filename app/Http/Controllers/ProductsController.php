@@ -92,6 +92,10 @@ class ProductsController extends Controller
         return response()->json([null]);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function search(Request $request)
     {
         $whereData = [
@@ -101,10 +105,14 @@ class ProductsController extends Controller
         return response()->json($products, 200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addProductToStock(Request $request)
     {
         $product = Product::find($request->product_id);
-        $stock = Stock::firstOrNew(['id' => $request->stock_id]);
+        $stock = Stock::firstOrNew(['name' => $request->stock_name]);
 
         return response()->json($stock->addProduct($product), 200);
     }
