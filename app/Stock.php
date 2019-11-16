@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Stock extends Model
 {
     protected $fillable = [
-        'name',
+        'name', 'product_id', 'qty', 'lot'
     ];
 
     /**

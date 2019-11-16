@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Movement;
 use App\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -42,8 +43,13 @@ class StocksController extends Controller
 
         $stock = Stock::create($request->all());
         // create movement
-        // return movenment
-        return response()->json($stock, 201);
+        $movement = new Movement;
+        $movement->stock_id = $stock->id;
+        $movement->product_id = $request->get('product_id');
+        $movement->moved_to = 'moved to ' . $stock->name;
+        $movement->save();
+        // return movement
+        return response()->json(['stock' => $stock, 'movement' => $movement], 201);
     }
 
     /**
