@@ -34,7 +34,7 @@ class StocksController extends Controller
             'name' => 'required',
             'qty' => 'required|min:1',
             'product_id' => 'required|exists:products,id',
-            'lot' => 'required'
+            'lot' => 'required|unique:stocks' // a product cannot exist multiple times with the same lot on the same stock
         ]);
 
         if ($validator->fails()) {
@@ -43,11 +43,7 @@ class StocksController extends Controller
 
         $stock = Stock::create($request->all());
         // create movement
-        $movement = new Movement;
-        $movement->stock_id = $stock->id;
-        $movement->product_id = $request->get('product_id');
-        $movement->moved_to = 'moved to ' . $stock->name;
-        $movement->save();
+        $movement = $this->createMovement($request, $stock);
         // return movement
         return response()->json(['stock' => $stock, 'movement' => $movement], 201);
     }
@@ -77,7 +73,10 @@ class StocksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $stock = Stock::findOrFail($id);
+        $stock->update($request->all());
+
+        return response()->json(['stock' => $stock], 200);
     }
 
     /**
@@ -97,5 +96,20 @@ class StocksController extends Controller
         }
 
         return response()->json([null]);
+    }
+
+    /**
+     * @param Request $request
+     * @param $stock
+     * @return Movement
+     */
+    private function createMovement(Request $request, $stock): Movement
+    {
+        $movement = new Movement;
+        $movement->stock_id = $stock->id;
+        $movement->product_id = $request->get('product_id');
+        $movement->moved_to = 'moved to ' . $stock->name;
+        $movement->save();
+        return $movement;
     }
 }
