@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Location;
 use App\Movement;
 use App\Stock;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
-use phpDocumentor\Reflection\Location;
 
 class StocksController extends Controller
 {
@@ -103,14 +103,18 @@ class StocksController extends Controller
     /**
      * @param Request $request
      * @param $stock
+     * @param array $additional
      * @return Movement
      */
-    private function createMovement(Request $request, $stock): Movement
+    private function createMovement(Request $request, $stock, $additional = []): Movement
     {
         $movement = new Movement;
         $movement->stock_id = $stock->id;
         $movement->product_id = $request->get('product_id');
         $movement->moved_to = 'moved to ' . $stock->name;
+        if ($additional) {
+            $movement->location = $additional['location'];
+        }
         $movement->save();
         return $movement;
     }
@@ -131,8 +135,21 @@ class StocksController extends Controller
         $qty = $request->get('qty');
 
         $location = Location::find($request->get('location_id'));
-        $location->createStockOnLocation($location, $stock, $qty);
+        if ($location->createStockOnLocation($location, $stock, $qty)) {
+            $this->depleteStock($qty, $stock);
+            $this->createMovement($request, $stock, ['location' => $location]);
+        }
 
         return response(['stock' => $stock, 'location' => $location, 'qty' => $qty], 201);
+    }
+
+    /**
+     * @param $qty
+     * @param $stock
+     */
+    private function depleteStock($qty, $stock): void
+    {
+        $stock->qty -= $qty;
+        $stock->save();
     }
 }
