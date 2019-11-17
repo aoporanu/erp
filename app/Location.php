@@ -8,7 +8,10 @@ class Location extends Model
 {
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'parent',
+        'product_id',
+        'qty'
     ];
 
     /**
@@ -16,9 +19,27 @@ class Location extends Model
      * @param $stock
      * @param $qty
      * @return bool
+     * @throws \Throwable
      */
     public function createStockOnLocation($location, $stock, $qty)
     {
-        return self::save(['location_name' => $location->name, 'stock_id' => $stock->id, 'qty' => $qty]);
+        $stockOnLocation = self::where([
+            'name' => $location->name,
+            'parent' => $stock->id,
+            'product_id' => 1,
+            'description' => $location->name . ' for ' . $stock->id
+        ])->first();
+
+        if ($stockOnLocation) {
+            return $stockOnLocation->update(['qty' => $stockOnLocation->qty + $qty]);
+        }
+
+        return self::create([
+            'name' => $location->name,
+            'parent' => $stock->id,
+            'qty' => $qty,
+            'product_id' => 1,
+            'description' => $location->name . ' for ' . $stock->id,
+        ]);
     }
 }
