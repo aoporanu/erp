@@ -129,17 +129,22 @@ class StocksController extends Controller
         if (!$stock) {
             return response()->json(['error' => 'Stock not found']);
         }
+
+        $qty = $request->get('qty');
+        // do not add
+        if ($stock->qty < $qty) {
+            return response()->json(['error' => 'The quantity to be moved is greater than the quantity in stock']);
+        }
+
+        // do not add
         if ($stock->qty <= 0) {
             return response()->json(['error' => 'QTY was zero for the selected stock. Please choose another']);
         }
-        $qty = $request->get('qty');
+
 
         $location = Location::find($request->get('location_id'));
         if (!$location) {
             return response()->json(['error' => 'There doesn\'t appear to be such a location']);
-        }
-        if ($stock->qty < $qty) {
-            return response()->json(['error' => 'The quantity to be moved is greater than the quantity in stock']);
         }
 
         if ($location->createStockOnLocation($location, $stock, $qty)) {

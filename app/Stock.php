@@ -14,6 +14,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *  - Best Before
  *  - Mobile administrations (gestiune)
  * @package App
+ * @method static paginate(int $int)
+ * @method static create(array $all)
+ * @method static findOrFail(int $id)
+ * @method update(array $attributes = [])
  */
 class Stock extends Model
 {

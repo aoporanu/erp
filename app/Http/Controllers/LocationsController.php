@@ -32,6 +32,7 @@ class LocationsController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
+            'parent' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -68,7 +69,15 @@ class LocationsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $location = Location::findOrFail($id);
+
+        if (!$location) {
+            return response()->json(['error' => 'No stock with given id']);
+        }
+
+        $location->update($request->all());
+
+        return response()->json(['location' => $location], 201);
     }
 
     /**
