@@ -110,7 +110,7 @@ class StocksController extends Controller
     {
         $movement = new Movement;
         $movement->stock_id = $stock->id;
-        $movement->product_id = $request->get('product_id');
+        $movement->product_id = $stock->product_id;
         $movement->moved_to = 'moved to ' . $stock->name;
         if ($additional) {
             $movement->location = $additional['location'];
@@ -135,6 +135,13 @@ class StocksController extends Controller
         $qty = $request->get('qty');
 
         $location = Location::find($request->get('location_id'));
+        if (!$location) {
+            return response()->json(['error' => 'There doesn\'t appear to be such a location']);
+        }
+        if ($stock->qty < $qty) {
+            return response()->json(['error' => 'The quantity to be moved is greater than the quantity in stock']);
+        }
+
         if ($location->createStockOnLocation($location, $stock, $qty)) {
             $this->depleteStock($qty, $stock);
             $this->createMovement($request, $stock, ['location' => $location]);
