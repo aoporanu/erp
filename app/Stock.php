@@ -41,4 +41,14 @@ class Stock extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+     /**
+     * @param $qty
+     * @param $stock
+     */
+    public function depleteStock($qty, $stock): void
+    {
+        $stock->qty -= $qty;
+        $stock->save();
+    }
 }

@@ -125,43 +125,34 @@ class StocksController extends Controller
      */
     public function addStockOnLocation(Request $request)
     {
-        $stock = Stock::findOrFail($request->get('stock_id'));
-        if (!$stock) {
-            return response()->json(['error' => 'Stock not found']);
+        foreach ($request->json()->get('products') as $product) {
+            $stock = Stock::findOrFail($product['stock_id']);
+
+            if (!$stock) {
+                return response()->json(['error' => 'Stock not found']);
+            }
+
+            $qty = $product['qty'];
+            $location = Location::find($product['location_id']);
+
+            if ($stock->qty < $qty) {
+                return response()->json(['error' => 'The quantity to be moved is greater than the quantity in stock for ' . $stock->id . ' and ' . $location->id]);
+            }
+
+            if ($stock->qty == 0) {
+                return response()->json(['error' => 'QTY was zero for the selected stock for ' . $stock->id . ' and ' . $location->id . '. Please choose another']);
+            }
+            if (!$location) {
+                return response()->json(['error' => 'There doesn\'t appear to be such a location']);
+            }
+
+            if ($location->createStockOnLocation($location, $stock, $qty)) {
+                (new Stock)->depleteStock($qty, $stock);
+                $this->createMovement($request, $stock, ['location' => $location]);
+            }
+
+            return response(['stock' => $stock, 'location' => $location, 'qty' => $qty], 201);
         }
-
-        $qty = $request->get('qty');
-        // do not add
-        if ($stock->qty < $qty) {
-            return response()->json(['error' => 'The quantity to be moved is greater than the quantity in stock']);
-        }
-
-        // do not add
-        if ($stock->qty <= 0) {
-            return response()->json(['error' => 'QTY was zero for the selected stock. Please choose another']);
-        }
-
-
-        $location = Location::find($request->get('location_id'));
-        if (!$location) {
-            return response()->json(['error' => 'There doesn\'t appear to be such a location']);
-        }
-
-        if ($location->createStockOnLocation($location, $stock, $qty)) {
-            $this->depleteStock($qty, $stock);
-            $this->createMovement($request, $stock, ['location' => $location]);
-        }
-
-        return response(['stock' => $stock, 'location' => $location, 'qty' => $qty], 201);
     }
-
-    /**
-     * @param $qty
-     * @param $stock
-     */
-    private function depleteStock($qty, $stock): void
-    {
-        $stock->qty -= $qty;
-        $stock->save();
-    }
+   
 }
