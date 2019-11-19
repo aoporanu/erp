@@ -14,8 +14,8 @@ class AlterLocationsAddProductNParentStock extends Migration
     public function up()
     {
         Schema::table('locations', function (Blueprint $table) {
-            $table->integer('parent')->after('id');
-            $table->integer('product_id')->after('parent')->default(0);
+//            $table->integer('parent')->after('id');
+//            $table->integer('product_id')->after('parent')->default(0);
         });
     }
 

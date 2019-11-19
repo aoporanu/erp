@@ -14,3 +14,7 @@ Route::apiResource('/stocks', 'StocksController');
 Route::post('/stocks/add-on-location', 'StocksController@addStockOnLocation');
 
 Route::apiResource('/locations', 'LocationsController');
+
+Route::apiResource('/orders', 'OrdersController');
+
+Route::get('/orders/{order}/populate', 'OrdersController@populate');

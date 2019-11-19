@@ -2,84 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Location;
 use App\Order;
+use Exception as ExceptionClass;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 
 class OrdersController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
-        //
-    }
+        $orders = Order::paginate(15);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([$orders], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'client' => 'required',
+            'tp' => 'required|min:1|max:31|integer',
+            'creator' => 'required',
+            'agent' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors(), 'request' => $request->all()], 406);
+        }
+
+        $order = Order::create($request->all());
+
+        return response()->json(['order' => $order], 201);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @param Order $order
+     * @return Response
      */
     public function show(Order $order)
     {
-        //
+        return response()->json($order, 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @param Order $order
+     * @return Response
      */
-    public function edit(Order $order)
+    public function populate(Order $order)
     {
-        //
+        $locations = Location::all();
+
+        return response()->json(['order' => $order, 'locations' => $locations], 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Order $order
+     * @return Response
      */
     public function update(Request $request, Order $order)
     {
-        //
+        $order->update($request->all());
+
+        return response()->json(['order', $order], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @param Order $order
+     * @return Response
+     * @throws ExceptionClass
      */
     public function destroy(Order $order)
     {
-        //
+        try {
+            $order->delete();
+        } catch (ExceptionClass $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+
+        return response()->json([null]);
     }
 }
