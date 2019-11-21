@@ -72,6 +72,11 @@ class OrdersController extends Controller
         return response()->json(['order' => $order, 'locations' => $locations], 200);
     }
 
+    public function addToOrder(Order $order, Location $location)
+    {
+        
+    }
+
     /**
      * Update the specified resource in storage.
      *

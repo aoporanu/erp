@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Stock
@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *  - PAID
  *  - Best Before
  *  - Mobile administrations (gestiune)
+ * @property int qty
  * @package App
  * @method static paginate(int $int)
  * @method static create(array $all)
  * @method static findOrFail(int $id)
  * @method update(array $attributes = [])
+ * @method static firstOrCreate(Product $product)
  */
 class Stock extends Model
 {
@@ -35,20 +37,36 @@ class Stock extends Model
     }
 
     /**
-     * @return BelongsTo
+     * @return HasMany
      */
-    public function location()
+    public function locations()
     {
-        return $this->belongsTo(Location::class);
+        return $this->hasMany(Location::class);
     }
 
      /**
      * @param $qty
      * @param $stock
      */
-    public function depleteStock($qty, $stock): void
+    public function depleteStock(int $qty, Stock $stock): void
     {
         $stock->qty -= $qty;
         $stock->save();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }
