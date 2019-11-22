@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Location extends Model
 {
@@ -41,5 +42,13 @@ class Location extends Model
             'product_id' => 1,
             'description' => $location->name . ' for ' . $stock->id,
         ]);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Location;
 use App\Order;
+use App\Stock;
 use Exception as ExceptionClass;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -63,18 +64,28 @@ class OrdersController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param Order $order
+     * @param Request $request
      * @return Response
      */
-    public function populate(Order $order)
+    public function populate(Order $order, Request $request)
     {
         $locations = Location::all();
 
         return response()->json(['order' => $order, 'locations' => $locations], 200);
     }
 
-    public function addToOrder(Order $order, Location $location)
+    /**
+     * @param Request $request
+     */
+    public function addToOrder(Request $request)
     {
-        
+        $order = Order::find($request->json('order'));
+
+        foreach ($request->json('products') as $product) {
+            $location = Location::find($product['id']);
+            $stock = Stock::find($location->product_id);
+            $order->product()->attach($location->id, ["from_location" => $product["id"], "from_stock" => $stock->id, "qty" => $product['qty'], "price" => $location->price * $product['qty']]);
+        }
     }
 
     /**

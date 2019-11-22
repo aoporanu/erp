@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Class Order
+ * @method static paginate
+ * @package App
+ */
 class Order extends Model
 {
     protected $fillable = [

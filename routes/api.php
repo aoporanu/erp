@@ -18,3 +18,5 @@ Route::apiResource('/locations', 'LocationsController');
 Route::apiResource('/orders', 'OrdersController');
 
 Route::get('/orders/{order}/populate', 'OrdersController@populate');
+
+Route::post('/orders/add-to-order', 'OrdersController@addToOrder');
