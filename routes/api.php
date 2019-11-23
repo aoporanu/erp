@@ -20,3 +20,4 @@ Route::apiResource('/orders', 'OrdersController');
 Route::get('/orders/{order}/populate', 'OrdersController@populate');
 
 Route::post('/orders/add-to-order', 'OrdersController@addToOrder');
+Route::get('/orders/{order}/process', 'OrdersController@processOrder');

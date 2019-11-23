@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static findOrFail(int $id)
  * @method update(array $attributes = [])
  * @method static firstOrCreate(Product $product)
+ * @method static find($product_id)
  */
 class Stock extends Model
 {

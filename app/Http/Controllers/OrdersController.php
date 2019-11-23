@@ -6,6 +6,7 @@ use App\Location;
 use App\Order;
 use App\Stock;
 use Exception as ExceptionClass;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -76,16 +77,20 @@ class OrdersController extends Controller
 
     /**
      * @param Request $request
+     * @return JsonResponse
      */
     public function addToOrder(Request $request)
     {
         $order = Order::find($request->json('order'));
-
+        $data = [];
         foreach ($request->json('products') as $product) {
             $location = Location::find($product['id']);
             $stock = Stock::find($location->product_id);
             $order->product()->attach($location->id, ["from_location" => $product["id"], "from_stock" => $stock->id, "qty" => $product['qty'], "price" => $location->price * $product['qty']]);
+            $data .= 'Added ' . $product['qty'] . ' from ' . $location['id'] . ' to order ' . $order->id;
         }
+
+        return \response()->json($data, 200);
     }
 
     /**
@@ -118,5 +123,20 @@ class OrdersController extends Controller
         }
 
         return response()->json([null]);
+    }
+
+    /**
+     * @param Order $order
+     * @return JsonResponse
+     */
+    public function processOrder(Order $order)
+    {
+        if ($order->status == 'processed') {
+            return response()->json(['error' => 'Order is already processed']);
+        }
+
+        $order->status = 'processed';
+        $order->save();
+        return response()->json(['message' => 'Order marked as processed']);
     }
 }

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 /**
  * Class Order
  * @method static paginate
+ * @method static find(\Symfony\Component\HttpFoundation\ParameterBag $json)
+ * @method static create(array $all)
+ * @property mixed status
  * @package App
  */
 class Order extends Model
