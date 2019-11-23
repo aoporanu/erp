@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static find($id)
+ * @method void save()
  */
 class Location extends Model
 {

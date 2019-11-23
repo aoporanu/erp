@@ -48,8 +48,18 @@ class Order extends Model
         return $this->belongsToMany(Product::class, 'order_product');
     }
 
+    /**
+     * Unfinished
+     *
+     * @return bool
+     */
     public function populatedOK()
     {
-        return false;
+        foreach (self::product() as $product) {
+            if ($product->qty % $product->mechanism != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
