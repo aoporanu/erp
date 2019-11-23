@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class Order
- * @method static find(\Symfony\Component\HttpFoundation\ParameterBag $json)
+ * @method static find(ParameterBag $json)
  * @method static create(array $all)
  * @method static paginate(int $int)
  * @property mixed status
@@ -48,8 +49,20 @@ class Order extends Model
         return $this->belongsToMany(Product::class, 'order_product');
     }
 
-    public function populatedOK()
+    /**
+     * Unfinished
+     *
+     * @param $order
+     * @return bool
+     */
+    public static function populatedOK($order)
     {
-        return false;
+        foreach ($order->product() as $product) {
+            // daca grat % priced din mechanism pentru $order->product
+            if (Mechanism::promoOK($product) != 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

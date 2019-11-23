@@ -86,7 +86,9 @@ class OrdersController extends Controller
             $location = Location::find($product['id']);
             $stock = Stock::find($location->product_id);
             $order->product()->attach($location->id, ["from_location" => $product["id"], "from_stock" => $stock->id, "qty" => $product['qty'], "price" => $location->price * $product['qty']]);
-            $data .= 'Added ' . $product['qty'] . ' from ' . $location['id'] . ' to order ' . $order->id;
+            $data[] = 'Added ' . $product['qty'] . ' from ' . $location['id'] . ' to order ' . $order->id;
+            $location->qty -= $product['qty'];
+            $location->save();
         }
 
         return \response()->json($data, 200);
@@ -134,7 +136,7 @@ class OrdersController extends Controller
             return response()->json(['error' => 'Order is already processed']);
         }
 
-        if (!$order->populatedOK()) {
+        if (!$order->populatedOK($order)) {
             return response()->json(['error' => 'Products are not following promotional mechanisms'], 400);
         }
 
