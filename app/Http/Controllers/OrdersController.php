@@ -65,10 +65,9 @@ class OrdersController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param Order $order
-     * @param Request $request
      * @return Response
      */
-    public function populate(Order $order, Request $request)
+    public function populate(Order $order)
     {
         $locations = Location::all();
 
@@ -135,8 +134,12 @@ class OrdersController extends Controller
             return response()->json(['error' => 'Order is already processed']);
         }
 
+        if (!$order->populatedOK()) {
+            return response()->json(['error' => 'Products are not following promotional mechanisms'], 400);
+        }
+
         $order->status = 'processed';
         $order->save();
-        return response()->json(['message' => 'Order marked as processed']);
+        return response()->json(['message' => 'Order marked as processed', 'order' => $order]);
     }
 }

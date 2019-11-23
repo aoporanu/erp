@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static find($id)
@@ -53,5 +54,13 @@ class Location extends Model
     public function stock()
     {
         return $this->belongsTo(Stock::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function mechanisms()
+    {
+        return $this->hasMany(Mechanism::class);
     }
 }

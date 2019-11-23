@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Class Order
- * @method static paginate
  * @method static find(\Symfony\Component\HttpFoundation\ParameterBag $json)
  * @method static create(array $all)
+ * @method static paginate(int $int)
  * @property mixed status
  * @package App
  */
@@ -46,5 +46,10 @@ class Order extends Model
     public function product()
     {
         return $this->belongsToMany(Product::class, 'order_product');
+    }
+
+    public function populatedOK()
+    {
+        return false;
     }
 }
