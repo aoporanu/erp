@@ -59,8 +59,8 @@ class Order extends Model
     {
         foreach ($order->product() as $product) {
             // daca grat % priced din mechanism pentru $order->product
-            if (Mechanism::promoOK($product) != 0) {
-                return false;
+            if (!Mechanism::hasPromo($product)) {
+                return;
             }
         }
         return true;

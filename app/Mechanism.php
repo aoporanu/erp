@@ -7,9 +7,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @method static find($from_location)
+ * @method static where(string $string, $id)
  */
 class Mechanism extends Model
 {
+    public static function hasPromo($product)
+    {
+        return self::where('location_id', $product->id)->get('id');
+    }
+
     /**
      * @return BelongsTo
      */
