@@ -136,12 +136,14 @@ class OrdersController extends Controller
             return response()->json(['error' => 'Order is already processed']);
         }
 
+        // dd($order->populatedOK($order));
+
         if (!$order->populatedOK($order)) {
             return response()->json(['error' => 'Products are not following promotional mechanisms'], 400);
         }
 
-        $order->status = 'processed';
-        $order->save();
-        return response()->json(['message' => 'Order marked as processed', 'order' => $order]);
+        // $order->status = 'processed';
+        // $order->save();
+        // return response()->json(['message' => 'Order marked as processed', 'order' => $order]);
     }
 }

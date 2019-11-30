@@ -46,7 +46,7 @@ class Order extends Model
      */
     public function product()
     {
-        return $this->belongsToMany(Product::class, 'order_product');
+        return $this->belongsToMany(Location::class, 'order_product', 'order_id', 'product_id');
     }
 
     /**
@@ -57,8 +57,9 @@ class Order extends Model
      */
     public static function populatedOK($order)
     {
-        foreach ($order->product() as $product) {
+        foreach ($order->product as $product) {
             // daca grat % priced din mechanism pentru $order->product
+            // dd($product);
             if (!Mechanism::hasPromo($product)) {
                 return;
             }

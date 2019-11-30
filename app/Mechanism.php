@@ -13,6 +13,7 @@ class Mechanism extends Model
 {
     public static function hasPromo($product)
     {
+        // dd($product);
         return self::where('location_id', $product->id)->get('id');
     }
 
