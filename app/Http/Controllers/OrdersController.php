@@ -130,6 +130,26 @@ class OrdersController extends Controller
      * @param Order $order
      * @return JsonResponse
      */
+    public function firstStep(Order $order)
+    {
+        if ($order->status == 'processed') {
+            return response()->json(['error' => 'Order is already processed']);
+        }
+
+
+
+        // select products which belong to the order stock
+        $products = $order->product()->first();
+        dd($products->parent); // getting the parent (stock) for the given location, so now we can select from locations where name is not grat and parent == $products->parent
+
+        // and are not on the GRAT location, since we're adding
+        // priced items for the given zero-priced sku's
+    }
+
+    /**
+     * @param Order $order
+     * @return JsonResponse
+     */
     public function processOrder(Order $order)
     {
         if ($order->status == 'processed') {
@@ -145,5 +165,36 @@ class OrdersController extends Controller
         // $order->status = 'processed';
         // $order->save();
         // return response()->json(['message' => 'Order marked as processed', 'order' => $order]);
+    }
+    
+    /**
+     * Print the order, only if it has been processed.
+     * 
+     * @param Order $order
+     * @return JsonResponse
+     */
+    public function print(Order $order)
+    {
+        if ($order->status != 'processed') {
+            return response()->json(['error' => 'Order has not been processed accordingly']);
+        }
+    }
+    
+    /**
+     * 
+     * @param Order $order
+     */
+    public function removeItem(Order $order)
+    {
+        if ($order->status == 'processed') {
+            return response()->json(['error' => 'The order has already been processed']);
+        }
+        
+//         $productId = request('product_id');
+//         $product = Location::getFromLocation()
+        // 1 . load product on location
+        // 2 . if product.price == 0 it's ok to delete only this id
+            // 2.1 . if product.price != 0, then delete all products with this id from the order.
+        // return response telling the user the item has been deleted from the order.
     }
 }

@@ -21,3 +21,6 @@ Route::get('/orders/{order}/populate', 'OrdersController@populate');
 
 Route::post('/orders/add-to-order', 'OrdersController@addToOrder');
 Route::get('/orders/{order}/process', 'OrdersController@processOrder');
+Route::get('/orders/{order}/first-step', 'OrdersController@firstStep');
+Route::get('/orders/{order}/print', 'OrdersController@print');
+Route::get('/orders/{order}/remove-item', 'OrdersController@removeItem');
